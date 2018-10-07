@@ -1,0 +1,44 @@
+<% include ../partials/header %>
+
+   
+
+
+<div class="container">
+    <header class="jumbotron">
+        <div class="container">
+            <h1>Explore the best Kitespots in Greece</h1>
+            <p>View our best kitespots from all over Greece</p>
+            <p>
+                <a class="btn btn-primary  btn-lg" href="/kitespots/new">Add a new spot</a>
+            </p>
+        </div>
+    </header>
+
+    
+    
+        
+        
+    
+    
+    <div class="row text-center">
+        <% kitespots.forEach(function(kitespot){%>
+            <div class="col-md-3 col-sm-6">
+                <div class="img-thumbnail">
+                    <img src="<%= kitespot.image %>">
+                </div>
+                <div class="caption">
+                    <h4><%= kitespot.name %></h4>
+                </div>
+                <p>
+                    <a href="/kitespots/<%= kitespot._id %>" class="btn btn-primary">More Info</a>
+                </p>
+            </div>
+    
+        <% }); %>
+    </div>
+
+</div>
+
+
+
+<% include ../partials/footer %>
