@@ -20,20 +20,28 @@
         
     
     
-    <div class="row text-center">
+    <div class="row text-center" style="display:flex; flex-wrap: wrap;">
         <% kitespots.forEach(function(kitespot){%>
             <div class="col-md-3 col-sm-6">
                 <div class="img-thumbnail">
                     <img src="<%= kitespot.image %>">
+                    <div class="caption">
+                        <h4><%= kitespot.name %></h4>
+                        <% if (kitespot.rating === 0) { %>
+                        <em>No reviews yet.</em>
+                        <% } else { %>
+                        <span class="fa fa-star checked"></span>
+                        <span class="fa fa-star <% if (kitespot.rating > 1.5) { %> checked <% } %>"></span>
+                        <span class="fa fa-star <% if (kitespot.rating > 2.5) { %> checked <% } %>"></span>
+                        <span class="fa fa-star <% if (kitespot.rating > 3.5) { %> checked <% } %>"></span>
+                        <span class="fa fa-star <% if (kitespot.rating > 4.5) { %> checked <% } %>"></span>
+                        <% } %>
+                    </div>
+                    <p>
+                        <a href="/kitespots/<%= kitespot._id %>" class="btn btn-primary">More Info</a>
+                    </p>
                 </div>
-                <div class="caption">
-                    <h4><%= kitespot.name %></h4>
-                </div>
-                <p>
-                    <a href="/kitespots/<%= kitespot._id %>" class="btn btn-primary">More Info</a>
-                </p>
             </div>
-    
         <% }); %>
     </div>
 

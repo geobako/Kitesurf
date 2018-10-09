@@ -3,6 +3,7 @@ var app             = express();
 var bodyParser      =require("body-parser");
 var mongoose        =require("mongoose");
 var Kitespot        =require("./models/kitespot");
+var Review          = require("./models/review");
 var seedDB          =require("./seeds");
 var Comment         =require("./models/comment");
 var passport        =require("passport");
@@ -10,10 +11,13 @@ var LocalStrategy   =require("passport-local");
 var User            =require("./models/user");
 var methodOverride  =require("method-override");
 var flash           =require("connect-flash");
+var moment = require("moment");
+
 
 //requiring routes
 var commentRoutes    =require("./routes/comments"),
     kitespotRoutes  =require("./routes/kitespots"),
+    reviewRoutes     = require("./routes/review"),
     indexRoutes     =require("./routes/index");
 
 
@@ -22,13 +26,14 @@ var commentRoutes    =require("./routes/comments"),
 
 //seedDB(); //seed the database
 
-mongoose.connect("mongodb://localhost/kite_surf_v6",{ useNewUrlParser: true });
+mongoose.connect("mongodb://localhost/kite_surf_v15",{ useNewUrlParser: true });
 app.use(bodyParser.urlencoded({extended:true}));
 app.set("view engine","ejs");
 app.use(express.static(__dirname+"/public"));
 app.use(methodOverride("_method"));
 app.use(flash());
 
+app.locals.moment = require("moment");
 //passport config
 //=============================
 app.use(require("express-session")({
@@ -56,7 +61,7 @@ app.use(function(req,res,next){
 app.use(indexRoutes);
 app.use("/kitespots/:id/comments",commentRoutes);
 app.use("/kitespots",kitespotRoutes);
-
+app.use("/kitespots/:id/reviews", reviewRoutes);
 
 
 app.listen(process.env.PORT,process.env.IP,function(){

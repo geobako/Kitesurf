@@ -3,6 +3,7 @@ var router= express.Router();
 var Kitespot=require("../models/kitespot");
 var Comment=require("../models/comment");
 var middleware=require("../middleware");
+var Review = require("../models/review");
 
 
 
@@ -55,7 +56,10 @@ router.get("/new", middleware.isLoggedIn ,function(req,res){
 
 // SHOW ROUTE
 router.get("/:id",function(req,res){
-    Kitespot.findById(req.params.id).populate("comments").exec(function(err,foundSpot){
+    Kitespot.findById(req.params.id).populate("comments").populate({
+        path:"reviews",
+        options: {sort: {createdAt: -1}}
+    }).exec(function(err,foundSpot){
         if(err || !foundSpot){
             console.log(err);
             req.flash('error', 'Sorry, that kitespot does not exist!');
@@ -80,7 +84,7 @@ router.get("/:id/edit",middleware.checkKitespotOwnership, function(req,res){
 
 //update route
 router.put("/:id",middleware.checkKitespotOwnership,function(req,res){
-    
+   delete req.body.campground.rating; 
    Kitespot.findByIdAndUpdate(req.params.id,req.body.kitespot,function(err,updatedKitspot){
        if(err){
            res.redirect("/kitespots");
@@ -93,11 +97,27 @@ router.put("/:id",middleware.checkKitespotOwnership,function(req,res){
 
 //destroy kitespot route
 router.delete("/:id",middleware.checkKitespotOwnership, function(req,res){
-    Kitespot.findByIdAndRemove(req.params.id, function(err){
+    Kitespot.findById(req.params.id, function(err,kitespot){
         if(err){
             res.redirect("/kitespots");
         }else{
-            res.redirect("/kitespots");
+            Comment.remove({"_id": {$in: kitespot.comments}}, function (err) {
+                if (err) {
+                    console.log(err);
+                    return res.redirect("/kitespots");
+                }
+                // deletes all reviews associated with the campground
+                Review.remove({"_id": {$in: kitespot.reviews}}, function (err) {
+                    if (err) {
+                        console.log(err);
+                        return res.redirect("/kitespots");
+                    }
+                    //  delete the campground
+                    kitespot.remove();
+                    req.flash("success", "Kitespot deleted successfully!");
+                    res.redirect("/kitespots");
+                });
+            });    
         }
     });
 });

@@ -47,3 +47,6 @@ h4{
     color: black;
     font-size: 30px;
 }
+.checked {
+    color: orange;
+}

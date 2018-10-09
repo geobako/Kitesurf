@@ -4,6 +4,7 @@ var mongoose    =require("mongoose");
 //schema set up
 var commentSchema = new mongoose.Schema({
     text: String,
+    createdAt:{type:Date, default:Date.now},
     author: {
         id: {
             type:mongoose.Schema.Types.ObjectId,
